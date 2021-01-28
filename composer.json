@@ -1,0 +1,29 @@
+{
+  "name": "erik-konrad/directus-seo",
+  "type": "grav-plugin",
+  "description": "adds SEO configuration from directus headless cms",
+  "keywords": ["plugin"],
+  "homepage": "https://github.com/erik-konrad/grav-plugin-directus-seo",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Erik Konrad",
+      "email": "erik.konrad@zebra.de",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Grav\\Plugin\\DirectusSEO\\": "classes/"
+    },
+    "classmap":  ["directus-seo.php"]
+  },
+  "config": {
+    "platform": {
+      "php": "7.1.3"
+    }
+  }
+}
