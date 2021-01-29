@@ -24,21 +24,7 @@ class DirectusSEOPlugin extends Plugin
     protected $directusUtility;
 
 
-    /**
-     * DirectusSEOPlugin constructor.
-     * @param $name
-     * @param Grav $grav
-     * @param Config|null $config
-     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
-     */
-    public function __construct($name, Grav $grav, Config $config = null)
-    {
-        parent::__construct($name, $grav, $config);
-        $this->seoFile = $this->grav['page']->path() . '/seo.json';
-    }
+
 
     /**
      * @return array
@@ -83,13 +69,33 @@ class DirectusSEOPlugin extends Plugin
         // Enable the main events we are interested in
         $this->enable([
             'onPageInitialized' => ['onPageInitialized', 0],
+            'onTwigSiteVariables' => ['onTwigSiteVariables', 0],
         ]);
 
     }
 
     public function onPageInitialized() {
-        //$this->initializeDirectusUtility();
-       // $this->processSeo();
+        $this->initialize();
+        $this->processSeo();
+    }
+
+    public function onTwigSiteVariables() {
+        $data = [];
+        if ( file_exists( $this->seoFile ) )
+        {
+            $contents = file_get_contents( $this->seoFile );
+            $data = json_decode( $contents, true );
+            if ( count($data['data']) > 1 )
+            {
+                $data = $data['data'];
+            }
+            else
+            {
+                $data = $data['data'][0];
+            }
+        }
+
+        $this->grav['twig']->twig_vars['directus_seo'] = $data;
     }
 
     /**
@@ -98,7 +104,8 @@ class DirectusSEOPlugin extends Plugin
      * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    protected function initializeDirectusUtility() {
+    protected function initialize() {
+        $this->seoFile = $this->grav['page']->path() . '/seo.json';
         $this->directusUtility = new DirectusSEOUtility(
             $this->config["plugins.directus"]['directus']['directusAPIUrl'],
             $this->grav,
@@ -110,9 +117,37 @@ class DirectusSEOPlugin extends Plugin
     }
 
     private function processSeo() {
-        dump($this->config());
-        dump($this->grav['uri']->route());
-        dump($this->grav['page']->path());
-        dump($this->seoFile);
+        $filter = [
+            $this->config()['seo_slugField'] => [
+                'operator' => '_eq',
+                'value' => $this->grav['uri']->route()
+            ]
+        ];
+
+        if(!file_exists($this->seoFile)) {
+            try {
+                $request = $this->directusUtility->generateRequestUrl($this->config()['seo_table'], 0, 2, $filter);
+                $data = $this->directusUtility->get($request);
+                $this->writeFileToFileSystem($data->toArray());
+                dump($data->toArray());
+            } catch (\Exception $e) {
+                $this->grav['debugger']->addException($e);
+            }
+        }
+    }
+
+    /**
+     * @param array $data
+     * @param string $path
+     * @param string $filename
+     */
+    private function writeFileToFileSystem(array $data) {
+        try {
+            $fp = fopen($this->seoFile, 'w');
+            fwrite($fp, json_encode($data));
+            fclose($fp);
+        } catch (\Exception $e) {
+            $this->grav['debugger']->addException($e);
+        }
     }
 }
