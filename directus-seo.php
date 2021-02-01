@@ -89,7 +89,7 @@ class DirectusSEOPlugin extends Plugin
             {
                 $data = $data['data'];
             }
-            else
+            else if (isset($data['data'][0]))
             {
                 $data = $data['data'][0];
             }
