@@ -80,6 +80,7 @@ class DirectusSEOPlugin extends Plugin
     }
 
     public function onTwigSiteVariables() {
+
         $data = [];
         if ( file_exists( $this->seoFile ) )
         {
@@ -117,21 +118,22 @@ class DirectusSEOPlugin extends Plugin
     }
 
     private function processSeo() {
-        $filter = [
-            $this->config()['seo_slugField'] => [
-                'operator' => '_eq',
-                'value' => $this->grav['uri']->route()
-            ]
-        ];
+        if(isset($this->grav['page']->header()->directus['remote_meta']) && $this->grav['page']->header()->directus['remote_meta']) {
+            $filter = [
+                $this->config()['seo_slugField'] => [
+                    'operator' => '_eq',
+                    'value' => $this->grav['uri']->route()
+                ]
+            ];
 
-        if(!file_exists($this->seoFile)) {
-            try {
-                $request = $this->directusUtility->generateRequestUrl($this->config()['seo_table'], 0, 2, $filter);
-                $data = $this->directusUtility->get($request);
-                $this->writeFileToFileSystem($data->toArray());
-                dump($data->toArray());
-            } catch (\Exception $e) {
-                $this->grav['debugger']->addException($e);
+            if(!file_exists($this->seoFile)) {
+                try {
+                    $request = $this->directusUtility->generateRequestUrl($this->config()['seo_table'], 0, 2, $filter);
+                    $data = $this->directusUtility->get($request);
+                    $this->writeFileToFileSystem($data->toArray());
+                } catch (\Exception $e) {
+                    $this->grav['debugger']->addException($e);
+                }
             }
         }
     }
