@@ -6,6 +6,8 @@ use Grav\Common\Config\Config;
 use Grav\Common\Grav;
 use Grav\Common\Plugin;
 use Grav\Plugin\DirectusSEO\Utility\DirectusSEOUtility;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Class DirectusSEOPlugin
@@ -74,9 +76,47 @@ class DirectusSEOPlugin extends Plugin
 
     }
 
+    /**
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     public function onPageInitialized() {
+        $this->processWebHooks($this->grav['uri']->route());
         $this->initialize();
         $this->processSeo();
+    }
+
+    /**
+     * @param string $route
+     * @return bool
+     */
+    private function processWebHooks(string $route) {
+        switch ($route) {
+            case '/' . $this->config["plugins.directus"]['directus']['hookPrefix'] . '/dump-metadata':
+                $this->dumpMetadata();
+                break;
+        }
+        return true;
+    }
+
+    /**
+     * dumps the metadata
+     */
+    private function dumpMetadata() {
+        $path = getcwd() . '/user/pages';
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
+        );
+        foreach ($files as $fileinfo) {
+            if ($fileinfo->isFile() && $fileinfo->getFilename() === 'seo.json') {
+                dump('deleted: ' . $fileinfo->getRealPath());
+                unlink($fileinfo->getRealPath());
+            }
+        }
+        exit(200);
     }
 
     public function onTwigSiteVariables() {
