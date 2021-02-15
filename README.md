@@ -1,6 +1,6 @@
 # Directus Seo Plugin
 
-**This README.md file should be modified to describe the features, installation, configuration, and general usage of the plugin.**
+**The Plugin gets SEO informations from a directus headless CMS and provides it as a twig variable in the templates**
 
 The **Directus Seo** Plugin is an extension for [Grav CMS](http://github.com/getgrav/grav). adds SEO configuration from directus headless cms
 
@@ -38,19 +38,41 @@ Here is the default configuration and an explanation of available options:
 
 ```yaml
 enabled: true
+seo_table: zbr_seo
+seo_slugField: slug
 ```
+
+seo_table - the table with the SEO metadata
+
+seo_slugField - the field with the page route
 
 Note that if you use the Admin Plugin, a file with your configuration named directus-seo.yaml will be saved in the `user/config/plugins/`-folder once the configuration is saved in the Admin.
 
 ## Usage
 
-**Describe how to use the plugin.**
+**After installing the plugin, at the first Page Request in GRAV it lookups in a Directus CMS table for Metadata like Opengraph informations. It generates a seo.json and saves it to the page folder in GRAV. If there are metadata informations, the data is available in twig as the variable "directus_seo"**
 
-## Credits
+## CLI commands
 
-**Did you incorporate third-party code? Want to thank somebody?**
+```
+Usage:
+  command [options] [arguments]
 
-## To Do
+Options:
+  -h, --help            Display this help message
+  -q, --quiet           Do not output any message
+  -V, --version         Display this application version
+      --ansi            Force ANSI output
+      --no-ansi         Disable ANSI output
+  -n, --no-interaction  Do not ask any interactive question
+      --env[=ENV]       Use environment configuration (defaults to localhost)
+      --lang[=LANG]     Language to be used (defaults to en)
+  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
 
-- [ ] Future plans, if any
+Available commands:
+  dump  Dumps the SEO metadata informations
+  help  Displays help for a command
+  list  Lists commands
+```
+
 
