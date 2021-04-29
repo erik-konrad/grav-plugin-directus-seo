@@ -162,7 +162,7 @@ class DirectusSEOPlugin extends Plugin
             $filter = [
                 $this->config()['seo_slugField'] => [
                     'operator' => '_eq',
-                    'value' => $this->grav['uri']->route()
+                    'value' => $this->grav['uri']->uri()
                 ]
             ];
 

@@ -1,17 +1,16 @@
 name: Directus Seo
 slug: directus-seo
 type: plugin
-version: 0.1.0
+version: 0.1.1
 description: adds SEO configuration from directus headless cms
 icon: plug
 author:
   name: Erik Konrad
   email: erik.konrad@zebra.de
-homepage: https://github.com/erik-konrad/grav-plugin-directus-seo
-demo: http://demo.yoursite.com
-keywords: grav, plugin, etc
-bugs: https://github.com/erik-konrad/grav-plugin-directus-seo/issues
-docs: https://github.com/erik-konrad/grav-plugin-directus-seo/blob/develop/README.md
+homepage: https://github.com/zebra-group/grav-plugin-directus-seo
+keywords: seo, directus
+bugs: https://github.com/zebra-group/grav-plugin-directus-seo/issues
+docs: https://github.com/zebra-group/grav-plugin-directus-seo/blob/develop/README.md
 license: MIT
 
 dependencies:
