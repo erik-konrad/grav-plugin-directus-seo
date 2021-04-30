@@ -159,12 +159,21 @@ class DirectusSEOPlugin extends Plugin
 
     private function processSeo() {
         if(isset($this->grav['page']->header()->directus['remote_meta']) && $this->grav['page']->header()->directus['remote_meta']) {
-            $filter = [
-                $this->config()['seo_slugField'] => [
-                    'operator' => '_eq',
-                    'value' => $this->grav['uri']->uri()
-                ]
-            ];
+            if ($this->config()['seo_slugType'] === 'array') {
+                $filter = [
+                    $this->config()['seo_slugField'] => [
+                        'operator' => '_contains',
+                        'value' => $this->grav['uri']->uri()
+                    ]
+                ];
+            } else {
+                $filter = [
+                    $this->config()['seo_slugField'] => [
+                        'operator' => '_eq',
+                        'value' => $this->grav['uri']->uri()
+                    ]
+                ];
+            }
 
             if(!file_exists($this->seoFile)) {
                 try {

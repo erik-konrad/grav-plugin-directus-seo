@@ -1,3 +1,4 @@
 enabled: true
 seo_table: zbr_seo
 seo_slugField: slug
+seo_slugType: string
